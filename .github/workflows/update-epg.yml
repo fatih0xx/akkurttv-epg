@@ -30,7 +30,7 @@ jobs:
           set -euo pipefail
           source_url="${EPG_SOURCE_URL:-}"
           if [ -z "$source_url" ]; then
-            source_url="https://raw.githubusercontent.com/braveheart1983/ata""ktv""/refs/heads/main/epg.xml"
+            source_url="https://raw.githubusercontent.com/impresents/my-iptv-list/main/epg.xml"
           fi
           curl --location --fail --silent --show-error "$source_url" --output epg.xml.tmp
 
