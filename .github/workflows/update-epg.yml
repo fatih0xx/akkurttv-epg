@@ -38,9 +38,24 @@ jobs:
         run: |
           set -euo pipefail
           test -s epg.xml.tmp
+          bytes="$(wc -c < epg.xml.tmp | tr -d ' ')"
+          if [ "$bytes" -lt 200000 ]; then
+            echo "EPG is too small: ${bytes} bytes"
+            exit 1
+          fi
           grep -q "<tv" epg.xml.tmp
           grep -q "<channel" epg.xml.tmp
           grep -q "<programme" epg.xml.tmp
+          channel_count="$(grep -o "<channel " epg.xml.tmp | wc -l | tr -d ' ')"
+          programme_count="$(grep -o "<programme " epg.xml.tmp | wc -l | tr -d ' ')"
+          if [ "$channel_count" -lt 20 ]; then
+            echo "EPG channel count is too low: ${channel_count}"
+            exit 1
+          fi
+          if [ "$programme_count" -lt 500 ]; then
+            echo "EPG programme count is too low: ${programme_count}"
+            exit 1
+          fi
           today="$(TZ=Europe/Istanbul date '+%Y%m%d')"
           tomorrow="$(TZ=Europe/Istanbul date -d 'tomorrow' '+%Y%m%d')"
           grep -Eq "programme start=\"(${today}|${tomorrow})" epg.xml.tmp
