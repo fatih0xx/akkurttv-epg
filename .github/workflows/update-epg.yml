@@ -6,7 +6,7 @@ on:
     paths:
       - ".github/workflows/update-epg.yml"
   schedule:
-    - cron: "35 4 * * *"
+    - cron: "12 */3 * * *"
 
 permissions:
   contents: write
@@ -41,6 +41,9 @@ jobs:
           grep -q "<tv" epg.xml.tmp
           grep -q "<channel" epg.xml.tmp
           grep -q "<programme" epg.xml.tmp
+          today="$(TZ=Europe/Istanbul date '+%Y%m%d')"
+          tomorrow="$(TZ=Europe/Istanbul date -d 'tomorrow' '+%Y%m%d')"
+          grep -Eq "programme start=\"(${today}|${tomorrow})" epg.xml.tmp
           mv epg.xml.tmp epg.xml
 
       - name: Commit updated EPG
